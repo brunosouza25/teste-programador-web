@@ -59,6 +59,26 @@
     {{ parent() }}
     <script>
         let table = new DataTable('#productsTable');
+
+        $('#button-icon').click(function (e) {
+            e.preventDefault();
+            let productSearch = $('#search-bar').val()
+
+            $.ajax({
+                url:'/add_product_to_cart',
+                type: 'POST',
+                data: {productSearch: productSearch},
+                success: function (response) {
+                    if(response.code != 200) {
+                        $.alert({
+                            title: 'Não encontrado!',
+                            content: 'Produto não encontrado',
+                        });
+                    }
+                }
+            })
+        })
+
     </script>
 {% endblock %}
 
