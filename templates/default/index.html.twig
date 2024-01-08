@@ -264,9 +264,9 @@
                 url: '/get_products_in_cart',
                 type: 'GET',
                 success: function (products) {
+                    tableBody.innerHTML = '';
 
                     if (products.code != 404) {
-                        tableBody.innerHTML = '';
                         for (const product of products.products) {
 
                             tableBody.innerHTML += `
@@ -280,6 +280,11 @@
 
                         let table = new DataTable('#productsTable');
 
+                        $('#finish-order').prop('disabled', false);
+
+                    } else {
+                        $('#finish-order').prop('disabled', true);
+
                     }
                 }
             })
@@ -290,6 +295,9 @@
                 success: function (total) {
                     if (!isNaN(total)) {
                         $('#total').val(`${total.toFixed(2)}`);
+                    } else {
+                        $('#total').val(0);
+
                     }
                 }
             });
