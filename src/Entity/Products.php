@@ -22,9 +22,6 @@ class Products
     #[ORM\Column]
     private ?float $price = null;
 
-    #[ORM\Column]
-    private ?int $supplier_id = null;
-
     public function getId(): ?int
     {
         return $this->id;
@@ -66,15 +63,4 @@ class Products
         return $this;
     }
 
-    public function getSupplierId(): ?int
-    {
-        return $this->supplier_id;
-    }
-
-    public function setSupplierId(int $supplier_id): static
-    {
-        $this->supplier_id = $supplier_id;
-
-        return $this;
-    }
 }

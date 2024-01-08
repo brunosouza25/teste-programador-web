@@ -43,6 +43,7 @@
             <th>Produto</th>
             <th>Preço</th>
             <th>Quantidade</th>
+            <th>Fornecedores</th>
             <th>Remover do carrinho</th>
         </tr>
         </thead>
@@ -274,6 +275,7 @@
                                 <td>${product.name}</td>
                                 <td>R$ ${product.price.toFixed(2)}</td>
                                 <td>${product.quantity}</td>
+                                <td>${product.suppliers}</td>
                                 <td><a href="#" onclick="removeProductFromCart(${product.id})"><i class="bi bi-trash black 50"></i></a></td>
                             </tr>`
                         }

@@ -8,11 +8,13 @@ class CartService
 {
     private $cartRepository;
     private $productService;
+    private $suppliersService;
 
-    public function __construct(CartRepository $cartRepository, ProductsService $productService)
+    public function __construct(CartRepository $cartRepository, ProductsService $productService, SuppliersService $suppliersService)
     {
         $this->cartRepository = $cartRepository;
         $this->productService = $productService;
+        $this->suppliersService = $suppliersService;
     }
 
     public function addNewProductToCart($productSearch)
@@ -53,7 +55,15 @@ class CartService
         }
 
         $cartProducts = $this->cartRepository->getProductsInCart();
-        return ['info' => 'success', 'code' => '200', 'products' => $cartProducts];
+
+        $newArrayCartProducts = [];
+
+        foreach ($cartProducts as $cartProduct) {
+            $cartProduct['suppliers'] = $this->suppliersService->getSuppliersFromProducts($cartProduct['product_id']);
+            $newArrayCartProducts[] = $cartProduct;
+        }
+
+        return ['info' => 'success', 'code' => '200', 'products' => $newArrayCartProducts];
     }
 
     public function deleteProductFromCart($productId)
