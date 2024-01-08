@@ -14,15 +14,15 @@
     {% endblock %}
 
 
-
 </head>
 <body>
 <div class="container">
 
-{% include 'sidebar.html.twig' %}
-{% block body %}
+    {% include 'sidebar.html.twig' %}
 
-{% endblock %}
+        {% block body %}
+
+        {% endblock %}
 
 </div>
 {% block javascripts %}
@@ -35,8 +35,8 @@
 
 
     <script>
-        $(document).ready(function() {
-            $('.submenu-btn').click(function() {
+        $(document).ready(function () {
+            $('.submenu-btn').click(function () {
                 var submenu = $(this).next('.submenu');
                 var isVisible = submenu.is(':visible');
                 $('.submenu-btn').find('span').removeClass('rotate-span');
@@ -47,14 +47,34 @@
                 $(this).find('span').toggleClass('rotate-span', !isVisible);
             });
 
-            $('#toggle-button').click(function() {
+            $('.toggle-button-1').hide();
+            $('.sidebar').toggleClass('hidden');
+            $(this).toggleClass('hidden');
+
+            $('nav').animate({
+                width: 'toggle'
+            }, {
+                duration: 1
+            });
+            $('.toggle-button-1, .toggle-button-2').click(function () {
+                if ($(this).data('id') == 1) {
+                    $('.toggle-button-1').hide();
+                    $('.toggle-button-2').show();
+                }
+
+                if($(this).data('id') == 2) {
+                    $('.toggle-button-2').hide();
+                    $('.toggle-button-1').show();
+
+                }
+
                 $('.sidebar').toggleClass('hidden');
                 $(this).toggleClass('hidden');
 
                 $('nav').animate({
                     width: 'toggle'
                 }, {
-                    duration: 1000
+                    duration: 500
                 });
             });
         });

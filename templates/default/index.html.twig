@@ -3,7 +3,21 @@
 {% block title %}Imply{% endblock %}
 
 {% block body %}
-    <div class="col-12 shadow-sm" id="main-screen">
+
+    <div class="col-12 shadow-sm">
+        <div class="col-6 row">
+            <div class="col-6">
+                <button class="toggle-button-2" data-id="2">
+                    <span id="myIcon" class="bi bi-list"></span>
+                </button>
+            </div>
+
+            <div class="col-6 justify-content-end d-flex">
+                <button class="toggle-button-1" data-id="1">
+                    <span id="myIcon" class="bi bi-list"></span>
+                </button>
+            </div>
+        </div>
         <div class="col-12 justify-content-end d-flex div-top-price">
             <label class="align-self-center mr-2 fs-2 font-weight-bold me-1" for="total">Total R$: </label>
             <input class="bg-white price-input text-end col-2 fs-1 font-weight-bold border border-dark" type="text"
@@ -115,15 +129,23 @@
             let number = $('#number').val().trim();
             let observation = $('#observation').val().trim();
 
-            if (uf.trim() == '' || city.trim() == '' || street.trim() == '' || neighborhood.trim() == '' || cep.trim() == '' || number.trim() == '' ) {
-                    $.alert({
-                        title: 'Erro!',
-                        content: 'Todos os campos são obrigatórios, exceto as observações!',
-                    });
-                    return;
+            if (uf.trim() == '' || city.trim() == '' || street.trim() == '' || neighborhood.trim() == '' || cep.trim() == '' || number.trim() == '') {
+                $.alert({
+                    title: 'Erro!',
+                    content: 'Todos os campos são obrigatórios, exceto as observações!',
+                });
+                return;
             }
 
-            let orderInfo = {uf: uf, city: city, neighborhood: neighborhood, street: street, cep: cep, observation: observation, number: number};
+            let orderInfo = {
+                uf: uf,
+                city: city,
+                neighborhood: neighborhood,
+                street: street,
+                cep: cep,
+                observation: observation,
+                number: number
+            };
 
             $.ajax({
                 url: '/finish_order',
@@ -139,7 +161,7 @@
                         return;
                     }
 
-                    realoadTable();
+                    reloadTable();
 
 
                 }
@@ -161,7 +183,7 @@
                     $('#street').val(response.logradouro)
                     $('#neighborhood').val(response.bairro)
 
-                    realoadTable();
+                    reloadTable();
                 },
                 error() {
 
@@ -194,14 +216,14 @@
 
                     $('#search-bar').val('')
 
-                    realoadTable();
+                    reloadTable();
 
 
                 }
             })
         })
 
-        function realoadTable() {
+        function reloadTable() {
 
             const tableBody = document.getElementById('table-body');
 
@@ -237,7 +259,7 @@
             })
         }
 
-        realoadTable();
+        reloadTable();
 
         function removeProductFromCart(productId) {
             $.ajax({
@@ -251,7 +273,7 @@
                         content: 'Produto removido com sucesso',
                     });
 
-                    realoadTable();
+                    reloadTable();
                 }
             })
         }

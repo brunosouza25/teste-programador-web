@@ -10,50 +10,55 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
 /* all elements */
 
-#toggle-button {
-    position: fixed;
-    font-size: 20px;
-    color: #fff;
-    top: 0;
-    left: 28vw;
-    transform: translateX(0px);
-    padding: 4px 6px;
-    background-color: #1e1e1e;
-    border: none;
-    cursor: pointer;
-    transition: transform 1s ease-in-out, left 1s ease-in-out;
-}
-
-@media (max-width: 768px) {
-    #toggle-button {
-        left: 5%;
+    .toggle-button-1, .toggle-button-2 {
+        position: fixed;
+        font-size: 20px;
+        color: #fff;
+        top: 0;
+        transform: translateX(0px);
+        padding: 4px 6px;
+        background-color: #1e1e1e;
+        border: none;
+        cursor: pointer;
+        transition: transform 1s ease-in-out, left 1s ease-in-out;
+        z-index: 999;
     }
-}
 
-@media (min-width: 375px) {
-    #toggle-button {
-        left: 40%;
+    .toggle-button-1 {
+        margin-right: 50px;
     }
-}
 
-@media (min-width: 992px) {
-    #toggle-button {
-        left: 28vw;
+    @media (min-width: 375px) {
+        .toggle-button-1 {
+            margin-right: 40px;
+        }
     }
-}
-@media (min-width: 1800px) {
-    #toggle-button {
-        left: 28vw;
-    }
-}
 
-#toggle-button.hidden{
-    color:#fff;
-    background-color:#1e1e1e;
-    font-size:20px;
-    transition: transform 1s ease-in-out;
-    transform: translateX(-250px);
-}
+    @media (min-width: 992px) {
+        .toggle-button-1 {
+            margin-right: 160px;
+        }
+    }
+
+    @media (min-width: 1200px) {
+        .toggle-button-1 {
+            margin-right: 250px;
+        }
+    }
+
+    @media (min-width: 1400px) {
+        .toggle-button-1 {
+            margin-right: 340px;
+        }
+    }
+
+    #toggle-button.hidden{
+        color:#fff;
+        background-color:#1e1e1e;
+        font-size:20px;
+        transition: transform 1s ease-in-out;
+        transform: translateX(-250px);
+    }
 body{
     /*background-color:#333;*/
 }
