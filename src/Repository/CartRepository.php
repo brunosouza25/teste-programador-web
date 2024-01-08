@@ -56,11 +56,11 @@ class CartRepository extends ServiceEntityRepository
         }
 
         $cartProducts = $queryBuilder
-            ->select('cp.quantity, cp.id', 'p.name, p.price') // Seleciona as entidades
+            ->select('cp.quantity, cp.id', 'p.name, p.price, p.id as product_id')
             ->from(CartProducts::class, 'cp')
-            ->innerJoin(Products::class, 'p') // Adiciona a tabela Product à consulta
+            ->innerJoin(Products::class, 'p')
             ->where('cp.cart_id = :cartId')
-            ->andWhere('cp.product_id = p.id') // Define a condição de correspondência entre as tabelas
+            ->andWhere('cp.product_id = p.id')
             ->setParameter('cartId', $cart[0]['id'])
             ->getQuery()
             ->getArrayResult();
@@ -126,11 +126,11 @@ class CartRepository extends ServiceEntityRepository
         }
 
         $total = $queryBuilder
-            ->select('SUM(p.price) as total') // Seleciona as entidades
+            ->select('SUM(p.price) as total')
             ->from(CartProducts::class, 'cp')
-            ->innerJoin(Products::class, 'p') // Adiciona a tabela Product à consulta
+            ->innerJoin(Products::class, 'p')
             ->where('cp.cart_id = :cartId')
-            ->andWhere('cp.product_id = p.id') // Define a condição de correspondência entre as tabelas
+            ->andWhere('cp.product_id = p.id')
             ->setParameter('cartId', $cart[0]['id'])
             ->getQuery()
             ->getArrayResult()[0];

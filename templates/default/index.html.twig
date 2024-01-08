@@ -6,13 +6,15 @@
     <div class="col-12 shadow-sm" id="main-screen">
         <div class="col-12 justify-content-end d-flex div-top-price">
             <label class="align-self-center mr-2 fs-2 font-weight-bold me-1" for="total">Total R$: </label>
-            <input class="bg-white price-input text-end col-2 fs-1 font-weight-bold border border-dark" type="text" name="total" id="total" value="0" disabled>
+            <input class="bg-white price-input text-end col-2 fs-1 font-weight-bold border border-dark" type="text"
+                   name="total" id="total" value="0" disabled>
         </div>
     </div>
 
     <div class="col-12 mt-1">
         <div class="input-group mb-3 col-12">
-            <input type="text" class="form-control" placeholder="Digite o nome ou a referência do produto" aria-label="Digite o nome ou a referência do produto" aria-describedby="button-icon" id="search-bar">
+            <input type="text" class="form-control" placeholder="Digite o nome ou a referência do produto"
+                   aria-label="Digite o nome ou a referência do produto" aria-describedby="button-icon" id="search-bar">
             <button class="btn btn-outline-secondary" type="button" id="button-icon">
                 <i class="bi bi-search"></i>
             </button>
@@ -34,22 +36,155 @@
         </tbody>
     </table>
 
+    <div class="col-12 text-end mt-3">
+        <button class="btn btn-success" id="finish-order">Finalizar Compra</button>
+
+    </div>
 {% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
     <script>
 
+        $('#finish-order').click(function (e) {
+            e.preventDefault();
+            $.confirm({
+                title: 'Finalizar venda',
+                columnClass: 'col-8',
+                content: `
+                            <div class="container">
+                                <h3 class="mb-4">Endereço de Entrega</h3>
+
+                                <form class="row" id="form">
+                                    <div class="mb-3 col-6">
+                                        <label for="cep" class="form-label">CEP:</label>
+                                        <input type="text" class="form-control" id="cep" name="cep" onchange="cepChange()" required>
+                                    </div>
+
+                                    <div class="mb-3 col-6">
+                                        <label for="uf" class="form-label">UF:</label>
+                                        <input type="text" class="form-control" id="uf" name="uf" required>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="city" class="form-label">Cidade:</label>
+                                        <input type="text" class="form-control" id="city" name="city" required>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="street" class="form-label">Rua:</label>
+                                        <input type="text" class="form-control" id="street" name="street" required>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="neighborhood" class="form-label">Bairro:</label>
+                                        <input type="text" class="form-control" id="neighborhood" name="neighborhood" required>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="number" class="form-label">Número:</label>
+                                        <input type="text" class="form-control" id="number" name="number" required>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="observation" class="form-label">Observações:</label>
+                                        <textarea class="form-control" id="observation" name="observation" rows="4"></textarea>
+                                    </div>
+
+                                    <button onclick="finishOrder(event)" class="btn btn-success">Finalizar</button>
+                                </form>
+                            </div>
+                `,
+                buttons: {
+                    cancelar: function () {
+
+                    }
+                }
+            });
+
+        })
+
+        function finishOrder(e) {
+            e.preventDefault();
+
+            let uf = $('#uf').val().trim();
+            let city = $('#city').val().trim();
+            let street = $('#street').val().trim();
+            let neighborhood = $('#neighborhood').val().trim();
+            let cep = $('#cep').val().trim();
+            let number = $('#number').val().trim();
+            let observation = $('#observation').val().trim();
+
+            if (uf.trim() == '' || city.trim() == '' || street.trim() == '' || neighborhood.trim() == '' || cep.trim() == '' || number.trim() == '' ) {
+                    $.alert({
+                        title: 'Erro!',
+                        content: 'Todos os campos são obrigatórios, exceto as observações!',
+                    });
+                    return;
+            }
+
+            let orderInfo = {uf: uf, city: city, neighborhood: neighborhood, street: street, cep: cep, observation: observation, number: number};
+
+            $.ajax({
+                url: '/finish_order',
+                type: 'POST',
+                data: {orderInfo: orderInfo},
+                success: function (response) {
+
+                    if (response.code != 200) {
+                        $.alert({
+                            title: 'Sucesso!',
+                            content: 'Compra realizada com sucesso!',
+                        });
+                        return;
+                    }
+
+                    realoadTable();
+
+
+                }
+            })
+        }
+
+        function cepChange() {
+            let cep = $('#cep').val().trim();
+            $.ajax({
+                url: `https://viacep.com.br/ws/${cep}/json`,
+                type: 'GET',
+                success: function (response) {
+
+                    console.log(typeof response != "object")
+
+
+                    $('#uf').val(response.uf)
+                    $('#city').val(response.localidade)
+                    $('#street').val(response.logradouro)
+                    $('#neighborhood').val(response.bairro)
+
+                    realoadTable();
+                },
+                error() {
+
+                    $.alert({
+                        title: 'Erro!',
+                        content: 'CEP não encontrado',
+                    });
+                    return;
+                }
+            });
+
+        }
+
         $('#button-icon').click(function (e) {
             e.preventDefault();
             let productSearch = $('#search-bar').val()
 
             $.ajax({
-                url:'/add_product_to_cart',
+                url: '/add_product_to_cart',
                 type: 'POST',
                 data: {productSearch: productSearch},
                 success: function (response) {
-                    if(response.code != 200) {
+                    if (response.code != 200) {
                         $.alert({
                             title: 'Não encontrado!',
                             content: 'Produto não encontrado',
@@ -71,10 +206,10 @@
             const tableBody = document.getElementById('table-body');
 
             $.ajax({
-                url:'/get_products_in_cart',
+                url: '/get_products_in_cart',
                 type: 'GET',
                 success: function (products) {
-                    if (products){
+                    if (products) {
                         tableBody.innerHTML = '';
                         for (const product of products) {
 
@@ -94,11 +229,10 @@
             })
 
             $.ajax({
-                url:'/get_total_cart',
+                url: '/get_total_cart',
                 type: 'GET',
                 success: function (total) {
                     $('#total').val(`${total.toFixed(2)}`)
-
                 }
             })
         }
@@ -110,7 +244,7 @@
                 url: '/delete_product_from_cart',
                 type: 'DELETE',
                 data: {productId: productId},
-                success: function (response) {
+                success: function () {
 
                     $.alert({
                         title: 'Sucesso!',

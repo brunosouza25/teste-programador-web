@@ -23,30 +23,37 @@ class CartService
             return ['info' => 'product not found', 'code' => 404];
         }
 
-        $cartId = $this->checkCartCreated();
+        $cartId = $this->checkCartCreated(true);
+
         $this->cartRepository->addNewProductToCart($product, $cartId);
 
         return ['info' => 'success', 'code' => 200];
     }
 
-    public function checkCartCreated()
+    public function checkCartCreated($create)
     {
         $cartId = $this->cartRepository->checkCartCreated();
 
-        if (is_null($cartId)) {
+        if (is_null($cartId) && $create) {
             $cartId = $this->cartRepository->createCart();
-        }
 
+            return $cartId;
+        }
         return $cartId;
+
+
     }
+
     public function getProductsInCart()
     {
         return $this->cartRepository->getProductsInCart();
     }
+
     public function deleteProductFromCart($productId)
     {
         $this->cartRepository->deleteProductFromCart($productId);
     }
+
     public function getTotalCart()
     {
         $total = $this->cartRepository->getTotalCart();
