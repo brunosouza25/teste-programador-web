@@ -56,15 +56,20 @@
             }, {
                 duration: 1
             });
+            let searchBar = document.querySelector('.search-bar');
+
             $('.toggle-button-1, .toggle-button-2').click(function () {
                 if ($(this).data('id') == 1) {
                     $('.toggle-button-1').hide();
                     $('.toggle-button-2').show();
+                    searchBar.style.zIndex = 9999
+
                 }
 
                 if($(this).data('id') == 2) {
                     $('.toggle-button-2').hide();
                     $('.toggle-button-1').show();
+                    searchBar.style.zIndex = 1
 
                 }
 
