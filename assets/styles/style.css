@@ -6,3 +6,157 @@
 .price-input {
     /*font-size: 36px;*/
 }
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+/* all elements */
+
+#toggle-button {
+    position: fixed;
+    font-size: 20px;
+    color: #fff;
+    top: 0;
+    left: 28vw;
+    transform: translateX(0px);
+    padding: 4px 6px;
+    background-color: #1e1e1e;
+    border: none;
+    cursor: pointer;
+    transition: transform 1s ease-in-out, left 1s ease-in-out;
+}
+
+@media (max-width: 768px) {
+    #toggle-button {
+        left: 5%;
+    }
+}
+
+@media (min-width: 375px) {
+    #toggle-button {
+        left: 40%;
+    }
+}
+
+@media (min-width: 992px) {
+    #toggle-button {
+        left: 28vw;
+    }
+}
+@media (min-width: 1800px) {
+    #toggle-button {
+        left: 28vw;
+    }
+}
+
+#toggle-button.hidden{
+    color:#fff;
+    background-color:#1e1e1e;
+    font-size:20px;
+    transition: transform 1s ease-in-out;
+    transform: translateX(-250px);
+}
+body{
+    /*background-color:#333;*/
+}
+html, body {
+    height: 100%;
+}
+
+.sidebar-div {
+    height: 100%;
+    width: 240px;
+    position: absolute;
+    z-index: 999;
+}
+
+.sidebar {
+    display: flex;
+    flex-direction: column; width:250px;
+    height: 100%;
+    transition: transform 1s ease-in-out;
+}
+.sidebar.hidden{
+    transform:translateX(-250px);
+}
+
+.submenu-btn{
+    border-left:1px solid red;
+}
+
+.sidebar .text{
+    color: white;
+    font-size: 25px;
+    font-weight: 600;
+    line-height: 65px;
+    text-align: center;
+    background: #1e1e1e;
+    letter-spacing: 1px;
+}
+.sidebar ul{
+    background: #1b1b1b;
+    height: 100%;
+    width: 100%;
+    margin-bottom:0;
+    padding-left:0;
+    list-style: none;
+    overflow-y:auto;
+    overflow-x:hidden;
+}
+.sidebar ul li{
+    line-height: 50px;
+    /*   bordas para as li's */
+    /*   border: 1px solid rgba(255,255,255,0.1);  */
+}
+
+li a.submenu-btn:hover,
+.sidebar li a:hover
+{
+    color:#083D77;
+    background-color:#fff;
+}
+li a.submenu-btn.active{
+    background-color:#fff;
+}
+li a.submenu-btn.active,
+li a.submenu-btn.active + .submenu {
+    color:#083D77;
+    border-left: 1px solid #B3BFB8;
+}
+.sidebar ul li a{
+    position: relative;
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+    padding-left: 40px;
+    font-weight: 500;
+    display: block;
+    width: 100%;
+    border-left: 3px solid transparent;
+}
+
+nav ul ul{
+    position: static;
+    display: none;
+}
+
+.sidebar ul ul li{
+    line-height:45px;
+    border-bottom:none;
+}
+
+.sidebar ul ul li a{
+    color:#F0F7F4;
+    font-size:17px;
+    padding-left:70px;
+}
+
+.rotate-span{
+    color:#083D77;
+    transform: rotate(180deg);
+}
+.sidebar ul li a span{
+    position:absolute;
+    right:20px;
+    font-size:20px;
+    transition:transform 0.4s;
+}
+
