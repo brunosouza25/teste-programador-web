@@ -68,7 +68,6 @@ class CartRepository extends ServiceEntityRepository
         if (empty($cartProducts)) {
             return null;
         }
-
         return $cartProducts;
     }
 

@@ -46,7 +46,14 @@ class CartService
 
     public function getProductsInCart()
     {
-        return $this->cartRepository->getProductsInCart();
+        $cartProducts = $this->cartRepository->getProductsInCart();
+
+        if (is_null($cartProducts)) {
+            return ['info' => 'cart empty', 'code' => 404];
+        }
+
+        $cartProducts = $this->cartRepository->getProductsInCart();
+        return ['info' => 'success', 'code' => '200', 'products' => $cartProducts];
     }
 
     public function deleteProductFromCart($productId)
