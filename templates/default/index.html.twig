@@ -5,8 +5,8 @@
 {% block body %}
     <div class="col-12 shadow-sm" id="main-screen">
         <div class="col-12 justify-content-end d-flex div-top-price">
-            <label class="align-self-center mr-2 fs-2 font-weight-bold" for="total">Total R$:</label>
-            <input class="bg-white price-input text-end col-2 fs-1 font-weight-bold border border-dark" type="text" name="total" id="total" value="50" disabled>
+            <label class="align-self-center mr-2 fs-2 font-weight-bold me-1" for="total">Total R$: </label>
+            <input class="bg-white price-input text-end col-2 fs-1 font-weight-bold border border-dark" type="text" name="total" id="total" value="0" disabled>
         </div>
     </div>
 
@@ -30,26 +30,7 @@
             <th>Remover do carrinho</th>
         </tr>
         </thead>
-        <tbody>
-        <tr>
-            <td>Produto A</td>
-            <td>R$ 50,00</td>
-            <td>100</td>
-            <td>X</td>
-        </tr>
-        <tr>
-            <td>Produto B</td>
-            <td>R$ 30,00</td>
-            <td>50</td>
-            <td>X</td>
-
-        </tr>
-        <tr>
-            <td>Produto C</td>
-            <td>R$ 80,00</td>
-            <td>75</td>
-            <td>X</td>
-        </tr>
+        <tbody id="table-body">
         </tbody>
     </table>
 
@@ -58,7 +39,6 @@
 {% block javascripts %}
     {{ parent() }}
     <script>
-        let table = new DataTable('#productsTable');
 
         $('#button-icon').click(function (e) {
             e.preventDefault();
@@ -74,10 +54,73 @@
                             title: 'Não encontrado!',
                             content: 'Produto não encontrado',
                         });
+                        return;
                     }
+
+                    $('#search-bar').val('')
+
+                    realoadTable();
+
+
                 }
             })
         })
+
+        function realoadTable() {
+
+            const tableBody = document.getElementById('table-body');
+
+            $.ajax({
+                url:'/get_products_in_cart',
+                type: 'GET',
+                success: function (products) {
+                    if (products){
+                        tableBody.innerHTML = '';
+                        for (const product of products) {
+
+                            tableBody.innerHTML += `
+                            <tr>
+                                <td>${product.name}</td>
+                                <td>R$ ${product.price.toFixed(2)}</td>
+                                <td>${product.quantity}</td>
+                                <td><a href="#" onclick="removeProductFromCart(${product.id})"><i class="bi bi-trash black 50"></i></a></td>
+                            </tr>`
+                        }
+
+                        let table = new DataTable('#productsTable');
+
+                    }
+                }
+            })
+
+            $.ajax({
+                url:'/get_total_cart',
+                type: 'GET',
+                success: function (total) {
+                    $('#total').val(`${total.toFixed(2)}`)
+
+                }
+            })
+        }
+
+        realoadTable();
+
+        function removeProductFromCart(productId) {
+            $.ajax({
+                url: '/delete_product_from_cart',
+                type: 'DELETE',
+                data: {productId: productId},
+                success: function (response) {
+
+                    $.alert({
+                        title: 'Sucesso!',
+                        content: 'Produto removido com sucesso',
+                    });
+
+                    realoadTable();
+                }
+            })
+        }
 
     </script>
 {% endblock %}

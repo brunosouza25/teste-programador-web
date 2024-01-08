@@ -28,4 +28,28 @@ class CartController extends AbstractController
         return new JsonResponse($response);
     }
 
+    #[Route('/get_products_in_cart', name: 'get_products_in_cart')]
+    public function getProductsInCart(): Response
+    {
+        $products = $this->cartService->getProductsInCart();
+
+        return new JsonResponse($products);
+    }
+    #[Route('/delete_product_from_cart', name: 'delete_product_from_cart')]
+    public function deleteProductFromCart(Request $request): Response
+    {
+        $productId = $request->get('productId');
+
+        $this->cartService->deleteProductFromCart($productId);
+
+        return new Response();
+    }
+    #[Route('/get_total_cart', name: 'get_total_cart')]
+    public function getTotalCart(): Response
+    {
+        $total = $this->cartService->getTotalCart();
+
+        return new JsonResponse($total);
+    }
+
 }

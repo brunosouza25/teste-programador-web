@@ -39,4 +39,22 @@ class CartService
 
         return $cartId;
     }
+    public function getProductsInCart()
+    {
+        return $this->cartRepository->getProductsInCart();
+    }
+    public function deleteProductFromCart($productId)
+    {
+        $this->cartRepository->deleteProductFromCart($productId);
+    }
+    public function getTotalCart()
+    {
+        $total = $this->cartRepository->getTotalCart();
+
+        if (is_null($total)) {
+            return 0;
+        }
+
+        return $total['total'];
+    }
 }

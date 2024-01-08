@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Cart;
 use App\Entity\CartProducts;
+use App\Entity\Products;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -39,6 +40,38 @@ class CartRepository extends ServiceEntityRepository
         return $cart[0]['id'];
     }
 
+    public function getProductsInCart()
+    {
+        $queryBuilder = $this->getEntityManager()->createQueryBuilder();
+
+        $cart = $queryBuilder
+            ->select('c')
+            ->from(Cart::class, 'c')
+            ->where('c.status = 0')
+            ->getQuery()
+            ->getArrayResult();
+
+        if (empty($cart)) {
+            return null;
+        }
+
+        $cartProducts = $queryBuilder
+            ->select('cp.quantity, cp.id', 'p.name, p.price') // Seleciona as entidades
+            ->from(CartProducts::class, 'cp')
+            ->innerJoin(Products::class, 'p') // Adiciona a tabela Product à consulta
+            ->where('cp.cart_id = :cartId')
+            ->andWhere('cp.product_id = p.id') // Define a condição de correspondência entre as tabelas
+            ->setParameter('cartId', $cart[0]['id'])
+            ->getQuery()
+            ->getArrayResult();
+
+        if (empty($cartProducts)) {
+            return null;
+        }
+
+        return $cartProducts;
+    }
+
     public function createCart()
     {
         $en = $this->getEntityManager();
@@ -51,7 +84,8 @@ class CartRepository extends ServiceEntityRepository
         return $cart->getId();
     }
 
-    public function addNewProductToCart($product, $cartId){
+    public function addNewProductToCart($product, $cartId)
+    {
         $en = $this->getEntityManager();
 
         $cartProduct = new CartProducts();
@@ -63,6 +97,45 @@ class CartRepository extends ServiceEntityRepository
         $en->persist($cartProduct);
         $en->flush();
 
+    }
+
+    public function deleteProductFromCart($productId)
+    {
+        $en = $this->getEntityManager();
+
+        $cartProduct = $en->getRepository(CartProducts::class)->find($productId);
+
+        $en->remove($cartProduct);
+
+        $en->flush();
+    }
+
+    public function getTotalCart()
+    {
+        $queryBuilder = $this->getEntityManager()->createQueryBuilder();
+
+        $cart = $queryBuilder
+            ->select('c')
+            ->from(Cart::class, 'c')
+            ->where('c.status = 0')
+            ->getQuery()
+            ->getArrayResult();
+
+        if (empty($cart)) {
+            return null;
+        }
+
+        $total = $queryBuilder
+            ->select('SUM(p.price) as total') // Seleciona as entidades
+            ->from(CartProducts::class, 'cp')
+            ->innerJoin(Products::class, 'p') // Adiciona a tabela Product à consulta
+            ->where('cp.cart_id = :cartId')
+            ->andWhere('cp.product_id = p.id') // Define a condição de correspondência entre as tabelas
+            ->setParameter('cartId', $cart[0]['id'])
+            ->getQuery()
+            ->getArrayResult()[0];
+
+        return $total;
     }
 
 //    /**
