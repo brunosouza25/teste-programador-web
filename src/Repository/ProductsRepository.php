@@ -29,18 +29,17 @@ class ProductsRepository extends ServiceEntityRepository
         $product = $queryBuilder
             ->select('p')
             ->from(Products::class, 'p')
-            ->where('p.name = :productSearch')
-            ->orWhere('p.reference = :productSearch')
-            ->setParameter('productSearch', $productSearch)
+            ->where($queryBuilder->expr()->like('p.name', ':productSearch'))
+            ->orWhere($queryBuilder->expr()->like('p.reference', ':productSearch'))
+            ->setParameter('productSearch', '%' . $productSearch . '%')
             ->getQuery()
             ->getArrayResult();
 
-        if (empty($product)){
+        if (empty($product)) {
             return null;
         }
 
         return (object)$product[0];
-
     }
 
 //    /**
