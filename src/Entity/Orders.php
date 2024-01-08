@@ -9,6 +9,11 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: OrdersRepository::class)]
 class Orders
 {
+    public function __construct()
+    {
+        $this->date = new \DateTime(date('Y-m-d H:i:s'));
+    }
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -17,7 +22,7 @@ class Orders
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $date = null;
 
-    #[ORM\Column(length: 9)]
+    #[ORM\Column(length: 255)]
     private ?string $cep = null;
 
     #[ORM\Column(length: 255)]
@@ -34,6 +39,9 @@ class Orders
 
     #[ORM\Column(length: 512)]
     private ?string $delivery_observations = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $delivery_number = null;
 
     public function getId(): ?int
     {
@@ -120,6 +128,18 @@ class Orders
     public function setDeliveryObservations(string $delivery_observations): static
     {
         $this->delivery_observations = $delivery_observations;
+
+        return $this;
+    }
+
+    public function getDeliveryNumber(): ?string
+    {
+        return $this->delivery_number;
+    }
+
+    public function setDeliveryNumber(string $delivery_number): static
+    {
+        $this->delivery_number = $delivery_number;
 
         return $this;
     }
