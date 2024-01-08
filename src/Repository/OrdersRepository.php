@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\OrderProducts;
 use App\Entity\Orders;
+use App\Entity\Products;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -56,6 +57,61 @@ class OrdersRepository extends ServiceEntityRepository
         $en->flush();
 
     }
+
+    public function getOrders($orderId)
+    {
+        $queryBuilder = $this->getEntityManager()->createQueryBuilder();
+        if (is_null($orderId)){
+            $ordersRaw = $queryBuilder
+                ->select('o.date', 'o.id', 'SUM(op.price) as total')
+                ->from(Orders::class, 'o')
+                ->innerJoin(OrderProducts::class, 'op', 'WITH', 'op.order_id = o.id')
+                ->groupBy('o.date', 'o.id')
+                ->getQuery()
+                ->getArrayResult();
+        } else {
+            $ordersRaw = $queryBuilder
+                ->select('o.date', 'o.id', 'o.delivery_city', 'o.delivery_street', 'o.delivery_uf', 'o.delivery_number', 'o.delivery_neighborhood', 'o.delivery_observations', 'o.cep', 'SUM(op.price) as total')
+                ->from(Orders::class, 'o')
+                ->innerJoin(OrderProducts::class, 'op')
+                ->where('o.id = :id')
+                ->andWhere('op.order_id = o.id')
+                ->setParameter('id', $orderId)
+                ->getQuery()
+                ->getArrayResult();
+            return $ordersRaw[0];
+        }
+
+
+
+        if (empty($ordersRaw)) {
+            return null;
+        }
+
+        return $ordersRaw;
+    }
+
+    public function getOrderProducts($orderId)
+    {
+        $queryBuilder = $this->getEntityManager()->createQueryBuilder();
+
+        $newOrder = new \stdClass();
+
+        $cartProducts = $queryBuilder
+            ->select('op.quantity, op.id', 'p.name, p.price, p.id as product_id')
+            ->from(OrderProducts::class, 'op')
+            ->innerJoin(Products::class, 'p')
+            ->where('op.order_id = :orderId')
+            ->andWhere('op.product_id = p.id')
+            ->setParameter('orderId', $orderId)
+            ->getQuery()
+            ->getArrayResult();
+
+        $newOrder->products = $cartProducts;
+
+        return $newOrder;
+    }
+
 
 //    /**
 //     * @return Orders[] Returns an array of Orders objects

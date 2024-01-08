@@ -17,6 +17,29 @@ class OrdersService
         $this->cartService = $cartService;
     }
 
+    public function getOrders($orderId = null)
+    {
+        $orders = $this->orderRepository->getOrders($orderId);
+        return $orders;
+    }
+    public function getOrderInfo($orderId)
+    {
+        $order = new \stdClass();
+        $orderProducts = $this->getOrderProducts($orderId);
+        $orderInfo = $this->orderRepository->getOrders($orderId);
+
+        $order->products = $orderProducts->products;
+        $order->orderInfo = $orderInfo;
+
+        return $order;
+    }
+
+    public function getOrderProducts($orderId)
+    {
+        $orders = $this->orderRepository->getOrderProducts($orderId);
+        return $orders;
+    }
+
     public function finishOrder($orderInfo)
     {
         $cartProducts = $this->cartService->getProductsInCart();
@@ -27,8 +50,6 @@ class OrdersService
 
         $order = $this->orderRepository->newOrder((object)$orderInfo);
 
-
-
         foreach ($cartProducts as $cartProduct) {
             $cartProduct = (object)$cartProduct;
             $this->orderRepository->addProductToOrder($cartProduct, $order->getId());
@@ -37,4 +58,6 @@ class OrdersService
 
         return ['info' => 'success', 'code' => 200];
     }
+
+
 }

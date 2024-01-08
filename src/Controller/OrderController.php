@@ -18,19 +18,44 @@ class OrderController extends AbstractController
         $this->ordersService = $ordersService;
     }
 
-    #[Route('/order', name: 'app_order')]
+    #[Route('/orders', name: 'orders')]
     public function index(): Response
     {
-        return $this->render('order/index.html.twig', [
-            'controller_name' => 'OrderController',
+        return $this->render('orders/index.html.twig', [
+            'controller_name' => 'Pedidos',
         ]);
+    }
+    #[Route('/get_orders', name: 'get_orders')]
+    public function getOrders(): Response
+    {
+        $orders = $this->ordersService->getOrders();
+        return new JsonResponse($orders);
+    }
+
+    #[Route('/order_info', name: 'order_info')]
+    public function orderInfo(Request $request): Response
+    {
+        $orderId = $request->get('orderId');
+        return $this->render('orders/orderInfo.html.twig', [
+            'controller_name' => 'Pedidos',
+            'orderId' => $orderId
+        ]);
+    }
+
+    #[Route('/get_order_info', name: 'get_order_info')]
+    public function getOrderInfo(Request $request): Response
+    {
+        $orderId = $request->get('orderId');
+
+        $orderProducts = $this->ordersService->getOrderInfo($orderId);
+
+        return new JsonResponse($orderProducts);
     }
 
     #[Route('/finish_order', name: 'finish_order')]
     public function finishOrder(Request $request): Response
     {
         $orderInfo = $request->get('orderInfo');
-
 
         $response = $this->ordersService->finishOrder($orderInfo);
         return new JsonResponse($response);

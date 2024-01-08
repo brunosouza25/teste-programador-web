@@ -79,7 +79,18 @@
             });
         });
 
-
+        $('#orders').click(function () {
+            $.confirm({
+                async: false,
+                title: 'Categorias',
+                columnClass: 'col-md-9',
+                content: 'URL:/orders',
+                buttons: {
+                    fechar: function () {
+                    }
+                }
+            });
+        });
 
 
     </script>

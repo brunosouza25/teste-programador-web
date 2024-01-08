@@ -152,14 +152,14 @@
                 type: 'POST',
                 data: {orderInfo: orderInfo},
                 success: function (response) {
+                    $.alert({
+                        title: 'Sucesso!',
+                        content: 'Compra realizada com sucesso!',
+                    });
 
-                    if (response.code != 200) {
-                        $.alert({
-                            title: 'Sucesso!',
-                            content: 'Compra realizada com sucesso!',
-                        });
-                        return;
-                    }
+                    var modal = $('.jconfirm-open');
+
+                    modal.remove();
 
                     reloadTable();
 
@@ -183,7 +183,7 @@
                     $('#street').val(response.logradouro)
                     $('#neighborhood').val(response.bairro)
 
-                    reloadTable();
+
                 },
                 error() {
 
@@ -199,29 +199,62 @@
 
         $('#button-icon').click(function (e) {
             e.preventDefault();
-            let productSearch = $('#search-bar').val()
 
-            $.ajax({
-                url: '/add_product_to_cart',
-                type: 'POST',
-                data: {productSearch: productSearch},
-                success: function (response) {
-                    if (response.code != 200) {
-                        $.alert({
-                            title: 'Não encontrado!',
-                            content: 'Produto não encontrado',
-                        });
-                        return;
+            if (e.which === 13 || e.keyCode === 13) {
+                let productSearch = $('#search-bar').val()
+
+                $.ajax({
+                    url: '/add_product_to_cart',
+                    type: 'POST',
+                    data: {productSearch: productSearch},
+                    success: function (response) {
+                        if (response.code != 200) {
+                            $.alert({
+                                title: 'Não encontrado!',
+                                content: 'Produto não encontrado',
+                            });
+                            return;
+                        }
+
+                        $('#search-bar').val('')
+                        $('#total').val(0)
+
+                        reloadTable();
+
+
                     }
+                })
+            }
 
-                    $('#search-bar').val('')
-
-                    reloadTable();
-
-
-                }
-            })
         })
+
+        $('#search-bar').keyup(function (e) {
+            e.preventDefault();
+            if (e.which === 13 || e.keyCode === 13) {
+                let productSearch = $('#search-bar').val()
+
+                $.ajax({
+                    url: '/add_product_to_cart',
+                    type: 'POST',
+                    data: {productSearch: productSearch},
+                    success: function (response) {
+                        if (response.code != 200) {
+                            $.alert({
+                                title: 'Não encontrado!',
+                                content: 'Produto não encontrado',
+                            });
+                            return;
+                        }
+
+                        $('#search-bar').val('')
+                        $('#total').val(0)
+
+                        reloadTable();
+
+                    }
+                })
+            }
+        });
 
         function reloadTable() {
 
@@ -231,9 +264,10 @@
                 url: '/get_products_in_cart',
                 type: 'GET',
                 success: function (products) {
-                    if (products) {
+
+                    if (products.code != 404) {
                         tableBody.innerHTML = '';
-                        for (const product of products) {
+                        for (const product of products.products) {
 
                             tableBody.innerHTML += `
                             <tr>
@@ -254,9 +288,12 @@
                 url: '/get_total_cart',
                 type: 'GET',
                 success: function (total) {
-                    $('#total').val(`${total.toFixed(2)}`)
+                    if (!isNaN(total)) {
+                        $('#total').val(`${total.toFixed(2)}`);
+                    }
                 }
-            })
+            });
+
         }
 
         reloadTable();
